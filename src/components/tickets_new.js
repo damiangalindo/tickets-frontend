@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
+import { BASE_URL } from '../actions';
+import BackToIndex from './back_to_index';
 
 class TicketsNew extends Component {
 
@@ -8,7 +11,8 @@ class TicketsNew extends Component {
 
     this.state = {
       subject: '',
-      description: ''
+      description: '',
+      auth_token: localStorage.getItem('auth_token')
     }
 
     this.handleChange = this.handleChange.bind(this);
@@ -23,14 +27,28 @@ class TicketsNew extends Component {
   handleSubmit(event) {
     event.preventDefault();
 
-    console.log(this.state)
+    const { subject, description, auth_token } = this.state;
+    console.log(auth_token)
+    axios.post(
+      `${ BASE_URL }/tickets/create`,
+      { subject: subject, message: description },
+      {
+        headers: {
+          'Authorization': auth_token
+        }
+      }
+    )
+    .then((response) => {
+      console.log(response.data)
+      this.props.history.push('/tickets');
+    })
   }
 
   render() {
     return(
       <div>
         <h2>New Ticket</h2>
-
+        <BackToIndex />
         <div>
           <form onSubmit={ this.handleSubmit }>
             <div className='form-group'>

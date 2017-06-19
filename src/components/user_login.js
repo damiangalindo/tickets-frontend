@@ -1,4 +1,7 @@
 import React, { Component } from 'react';
+import axios from 'axios';
+import { Link } from 'react-router-dom';
+import { BASE_URL } from '../actions';
 
 class UserLogin extends Component {
 
@@ -6,7 +9,7 @@ class UserLogin extends Component {
     super(props);
 
     this.state = {
-      username: '',
+      email: '',
       password: ''
     }
 
@@ -23,7 +26,18 @@ class UserLogin extends Component {
   handleSubmit(event) {
     event.preventDefault();
 
-    console.log(this.state);
+    const { email, password } = this.state;
+
+    axios.post(
+      `${ BASE_URL }/users/login`,
+      { email: email, password: password }
+    )
+    .then((response) => {
+      const { authentication_token, user_type } = response.data;
+      localStorage.setItem('auth_token', authentication_token);
+      localStorage.setItem('role', user_type);
+      this.props.history.push('/tickets');
+    });
   }
 
   render() {
@@ -32,15 +46,17 @@ class UserLogin extends Component {
         <h2>Login</h2>
         <form onSubmit={ this.handleSubmit }>
           <div className='form-group'>
-            <label>Username</label>
-            <input type='text' name='username' onChange={ this.handleChange } />
+            <label>Email</label>
+            <input type='text' className='form-control' name='email' onChange={ this.handleChange } />
           </div>
           <div className='form-group'>
             <label>Password</label>
-            <input type='password' name='password' onChange={ this.handleChange } />
+            <input type='password' className='form-control' name='password' onChange={ this.handleChange } />
           </div>
-          <div className='btn-group'>
+          <div className='form-group'>
             <button type='submit' className='btn btn-primary'>Login</button>
+            or
+            <Link to='/signup'>Register</Link>
           </div>
         </form>
       </div>
