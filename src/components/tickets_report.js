@@ -59,7 +59,7 @@ class TicketsReport extends Component {
 
       y+=10;
 
-      if(number_of_items === 2){
+      if(number_of_items === 10){
         page+=1;
         doc.addPage();
         doc.setPage(page);
